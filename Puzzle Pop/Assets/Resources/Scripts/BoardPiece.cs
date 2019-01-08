@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BoardPiece : MonoBehaviour {
+	public GameObject boardpiece;
 	float move = 0;
 	public float moveSpeed = 1;
+	private string type;
 	
 	private bool isAtTop;
 
@@ -37,6 +39,10 @@ public class BoardPiece : MonoBehaviour {
 		} else {
 			transform.position += new Vector3(-1, 0, 0);
 		}
+	}
+
+	public void SetType(string colour) {
+		type = colour;
 	}
 }
 

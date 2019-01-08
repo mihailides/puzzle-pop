@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Game : MonoBehaviour {
 	private static Game _instance; 
-
 	private bool game_froze = false;
 
     public static Game Instance { 
