@@ -61,24 +61,29 @@ public class Board : MonoBehaviour {
 		for (int j = 0; j < starting_column_numbers; j++) {
 			for (int i = 0; i < row_numbers; i++) {
 				if (board_pieces[i, j] != null) {
-					RaycastHit2D hit_left = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.left);
-					
+					// Because its catching multiple and can only return one
+					// RaycastHit2D hit_left = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.left);
+					RaycastHit2D hit_left = Physics2D.Raycast(new Vector2(board_pieces[i, j].transform.position.x - 1, board_pieces[i, j].transform.position.y), Vector2.zero);
+
+
 					if (hit_left != null && 
 					hit_left.collider != null && 
-					hit_left.collider != board_pieces[i, j].GetComponent<Collider>() && 
+					hit_left.collider.gameObject != board_pieces[i, j] && 
 					hit_left.collider.gameObject.GetComponent<BoardPiece>().type == board_pieces[i, j].GetComponent<BoardPiece>().type) {
 
-						RaycastHit2D hit_right = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.right);
+					RaycastHit2D hit_right = Physics2D.Raycast(new Vector2(board_pieces[i, j].transform.position.x + 1,board_pieces[i, j].transform.position.y), Vector2.zero);
 						if (hit_right != null && 
 						hit_right.collider != null && 
-						hit_right.collider != board_pieces[i, j].GetComponent<Collider>() && 
+						hit_right.collider.gameObject != board_pieces[i, j] && 
 						hit_right.collider.gameObject.GetComponent<BoardPiece>().type == board_pieces[i, j].GetComponent<BoardPiece>().type) {
+							Debug.Log("I hit left..: " + hit_left.collider.gameObject.GetComponent<BoardPiece>().type + "pos at " + hit_left.transform.position.x + 
+							" and right " + hit_right.collider.gameObject.GetComponent<BoardPiece>().type + " pos at " + hit_right.transform.position.x);
 							Destroy(hit_right.collider.gameObject);
 							Destroy(hit_left.collider.gameObject);
 							// Probably not gona destroy the instantianted object who knows
-							// Destroy(board_pieces[i, j]);
+							Destroy(board_pieces[i, j]);
 
-							// board_pieces[i, j] = null;
+							board_pieces[i, j] = null;
 						}
 					}
 				}
