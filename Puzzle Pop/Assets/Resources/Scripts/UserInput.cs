@@ -34,11 +34,9 @@ public class UserInput : MonoBehaviour {
 		} else if (Input.GetKeyDown(KeyCode.Return) || (Input.GetKeyDown(KeyCode.Space))) {
 			RaycastHit2D[] hits = Physics2D.RaycastAll(new Vector2(transform.position.x, transform.position.y), Vector2.zero);
 			for (int i = 0; i < hits.Length; i++) {
-				// Destroy(hits[i].transform.gameObject);
 				// Check if the piece is positioned at the right or left
 				bool is_left = hits[i].transform.position.x < transform.position.x;
 				hits[i].collider.gameObject.GetComponent<BoardPiece>().FlipPosition(is_left);
-				Debug.Log("Swap!");
 			}
 		}
 	}
