@@ -62,7 +62,7 @@ public class Board : MonoBehaviour {
 			for (int i = 0; i < row_numbers; i++) {
 				if (board_pieces[i, j] != null) {
 					// Bad, trying to find a better way. Can't turn queries off yet.
-					board_pieces[i, j].G etComponent<Collider2D>().enabled = false; 
+					board_pieces[i, j].GetComponent<Collider2D>().enabled = false; 
 
 					RaycastHit2D hit_left = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.left, 1);
 
