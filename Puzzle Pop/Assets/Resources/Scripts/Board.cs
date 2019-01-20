@@ -23,7 +23,7 @@ public class Board : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		MoveBlocks();
-		DeleteIfCombo();
+		DeleteCombos(FindCombos());
 	}
 
 	public void CreateBlocks() {
@@ -42,7 +42,6 @@ public class Board : MonoBehaviour {
 	}
 
 	public void MoveBlocks() {
-		// Debug.Log(board_pieces);
 		for (int j = 0; j < starting_column_numbers; j++) {
 			for (int i = 0; i < row_numbers; i++) {
 				if (board_pieces[i, j] != null) {
@@ -57,61 +56,55 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	public void DeleteIfCombo() {
+	public List<GameObject> FindCombos() {
+		List<GameObject> to_delete = new List<GameObject>();
 		for (int j = 0; j < starting_column_numbers; j++) {
 			for (int i = 0; i < row_numbers; i++) {
 				if (board_pieces[i, j] != null) {
 					// Bad, trying to find a better way. Can't turn queries off yet.
-					board_pieces[i, j].GetComponent<Collider2D>().enabled = false; 
+					board_pieces[i, j].G etComponent<Collider2D>().enabled = false; 
 
-					// Because its catching multiple and can only return one
-					// RaycastHit2D hit_left = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.left);
-					// RaycastHit2D hit_left = Physics2D.Raycast(new Vector2(board_pieces[i, j].transform.position.x - 1, board_pieces[i, j].transform.position.y), Vector2.zero);
-					RaycastHit2D hit_left = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.left);
-					Debug.Log("start pos.." + board_pieces[i, j].transform.position + " end pos" + Vector2.left);
-					Debug.DrawRay(board_pieces[i, j].transform.position, Vector2.left, Color.green);
+					RaycastHit2D hit_left = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.left, 1);
 
+					if (hit_left != null && hit_left.collider != null && hit_left.collider.gameObject.GetComponent<BoardPiece>().type == board_pieces[i, j].GetComponent<BoardPiece>().type) {
+						RaycastHit2D hit_right = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.right, 1);
 
-					if (hit_left != null && 
-					hit_left.collider != null &&  
-					hit_left.collider.gameObject.GetComponent<BoardPiece>().type == board_pieces[i, j].GetComponent<BoardPiece>().type) {
+						if (hit_right != null && hit_right.collider != null && hit_right.collider.gameObject.GetComponent<BoardPiece>().type == board_pieces[i, j].GetComponent<BoardPiece>().type) {
 
-					// RaycastHit2D hit_right = Physics2D.Raycast(new Vector2(board_pieces[i, j].transform.position.x + 1,board_pieces[i, j].transform.position.y), Vector2.zero);
-					RaycastHit2D hit_right = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.right);
-
-						if (hit_right != null && 
-						hit_right.collider != null && 
-						hit_right.collider.gameObject.GetComponent<BoardPiece>().type == board_pieces[i, j].GetComponent<BoardPiece>().type) {
-							Debug.Log("I hit left..: " + hit_left.collider.gameObject.GetComponent<BoardPiece>().type + "pos at " + hit_left.transform.position.x + 
-							" and right " + hit_right.collider.gameObject.GetComponent<BoardPiece>().type + " pos at " + hit_right.transform.position.x);
-							Destroy(hit_right.collider.gameObject);
-							Destroy(hit_left.collider.gameObject);
-							// Probably not gona destroy the instantianted object who knows
-							Destroy(board_pieces[i, j]);
-
-							board_pieces[i, j] = null;
+							to_delete.Add(hit_right.collider.gameObject);
+							to_delete.Add(hit_left.collider.gameObject);
+							to_delete.Add(board_pieces[i, j]);
 						}
 					}
+					// Check vertical combo
+					RaycastHit2D hit_up = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.up, 1);
+					
+					if (hit_up != null && hit_up.collider != null &&  hit_up.collider.gameObject.GetComponent<BoardPiece>().type == board_pieces[i, j].GetComponent<BoardPiece>().type) {
+						RaycastHit2D hit_down = Physics2D.Raycast(board_pieces[i, j].transform.position, Vector2.down, 1);
+
+						if (hit_down != null && hit_down.collider != null && hit_down.collider.gameObject.GetComponent<BoardPiece>().type == board_pieces[i, j].GetComponent<BoardPiece>().type) {
+							
+							to_delete.Add(hit_up.collider.gameObject);
+							to_delete.Add(hit_down.collider.gameObject);
+							to_delete.Add(board_pieces[i, j]);
+						}
+					}
+
+					// Turn collider back on.
 					if (board_pieces[i, j]) {
 						board_pieces[i, j].GetComponent<Collider2D>().enabled = true; 
 					}
 				}
 			}
-		}		
-	}
-		// RaycastHit2D hit_left = Physics2D.Raycast(originalPos.position, Vector2.left);
-		// // todo: does not equal our collider
-		// if (hit_left != null && hit_left.collider != null && hit_left.collider != hit_left.collider.gameObject.GetComponent<BoardPiece>().type == type) {
-			
-		// 	RaycastHit2D hit_right = Physics2D.Raycast(originalPos.position, Vector2.right);
-		// 	if (hit_right != null && hit_right.collider != null && hit_right.collider.gameObject.GetComponent<BoardPiece>().type == type) {
-		// 		// Debug.Log("Right block: x-" + hit_right.transform.position.x + " y-" + hit_right.transform.position.y + " " + hit_right.collider.gameObject.GetComponent<BoardPiece>().type + " Left block: x-" + hit_left.transform.position.x + " y-" + hit_left.collider.gameObject.transform.position.y + " " +  hit_left.collider.gameObject.GetComponent<BoardPiece>().type
-		// 		// + " Middle block: x-" + originalPos.position.x + " y-" + originalPos.position.y + " " );
-		// 		// Debug.Log("3 or more found!");
-		// 		Destroy(board_piece);
-		// 		Destroy(hit_right.collider.gameObject);
-		// 		Destroy(hit_left.collider.gameObject);
-		// 	}
-		// }
+		}
+		return to_delete;	
+	}	
 
+	public void DeleteCombos(List<GameObject> to_delete) {
+		foreach(GameObject block in to_delete) {
+			if (block) {
+				Destroy(block);				
+			}
+		}
+	}
 }
