@@ -5,6 +5,7 @@ using UnityEngine;
 public class BoardPiece : MonoBehaviour {
 	public GameObject boardpiece;
 	public string type;
+	public float move;
 	
 	private bool isAtTop;
 
@@ -13,7 +14,7 @@ public class BoardPiece : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+		move = 0;
 	}
 	
 	// Update is called once per frame
