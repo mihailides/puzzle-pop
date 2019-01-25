@@ -27,8 +27,8 @@ public class NewBoard : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		DeleteCombos(FindCombos());
-		// DropBlocks();
 		if (Time.time - add_row_timer >= moveSpeed) {
+			DropBlocks();
 			MoveBlocks();
 			AddNewRow();
 			add_row_timer = Time.time;
@@ -123,7 +123,8 @@ public class NewBoard : MonoBehaviour {
 	public void DeleteCombos(List<GameObject> to_delete) {
 		foreach(GameObject block in to_delete) {
 			if (block) {
-				Destroy(block);				
+				Destroy(block);		
+				board_pieces.Remove(block);		
 			}
 		}
 	}
